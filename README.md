@@ -3075,7 +3075,7 @@ Ce n'est pas la première fois que nous oublions d'éteindre ou de supprimer que
 
 ## SECTION 8 - Construction automatique des images et container avec GitHub Actions:
 
-## 97 - Commencement du projet branch sur github - s8-v4.
+## 97 - Commencement du projet branch sur github - s8-v1.
 
 1. Projet : graphql-actions voir github et clone le [repository]().
 2. yarn install
@@ -3102,3 +3102,41 @@ dist
 ```
 
 Car le but de cette section est de créer des automatismes avec github actions pour créer des actions comme : Créer les dépendance d'une application, le déploiement de celle-ci, La gestion des version sémantique, et etc.
+
+## 98 - Création du repository sur github.
+
+```
+git init
+
+git add .
+
+git commit -m "Start section 8 github actions"
+
+git remote add origin https://github.com/sergioamoncada/docker_graphql_actions.git
+git branch -M main
+git push -u origin main
+
+git checkout -b s8-v1
+```
+
+## 98 - Création du repository sur github.
+
+1. settings github sur le projet et lui créer un branch pour le projet.
+
+   ```
+   git init
+
+   git add .
+
+   git commit -m "Start section 8 github actions"
+
+   git remote add origin https://github.com/sergioamoncada/docker_graphql_actions.git
+   git branch -M main
+   git push -u origin main
+
+   git checkout -b s8-v1
+   ```
+
+## 99 - Configuration credentials sur github actions - secrets.
+
+1.
