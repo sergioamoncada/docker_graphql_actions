@@ -3105,22 +3105,6 @@ Car le but de cette section est de créer des automatismes avec github actions p
 
 ## 98 - Création du repository sur github.
 
-```
-git init
-
-git add .
-
-git commit -m "Start section 8 github actions"
-
-git remote add origin https://github.com/sergioamoncada/docker_graphql_actions.git
-git branch -M main
-git push -u origin main
-
-git checkout -b s8-v1
-```
-
-## 98 - Création du repository sur github.
-
 1. settings github sur le projet et lui créer un branch pour le projet.
 
    ```
@@ -3139,4 +3123,95 @@ git checkout -b s8-v1
 
 ## 99 - Configuration credentials sur github actions - secrets.
 
-1.
+1. Créer le token d'accès sur dockerhub pour le lier avec github actions :
+
+- Aller dans `Account Setting`.
+- `Security`.
+- `New Access Token`
+
+```
+nom : DOCKER_PASSWORD
+token autogérée !
+```
+
+2. Créer un repository sur DockerHub - Il peut être privé ou publique.
+
+3. Aller sur github sur notre repository et aller sur `Secret and variables`.
+
+**_Création du secret :_** USER
+
+```
+name* : DOCKER_USER
+
+secret* : user-docker-name = dockerhub.com le nom de l'utilisateur.
+```
+
+**_Création du secret :_** PASSWORD
+
+```
+name* : DOCKER_PASSWORD
+
+secret* : token-docker = dockerhub.com token créer.
+```
+
+## 100 - Les premier pas sur GitHub Actions.
+
+1. Recherche dans les actions de GitHub Actions :
+
+```
+Docker Image - Build a Docker image to deploy,
+run, or push to a registry.
+```
+
+- Clicker sur `Configure`
+
+Voici ce qu'il va créer, cette action du Docker Image :
+
+- Path dans notre projet : graphql-actions/.github/workflows/docker-image.yml
+
+```
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+```
+
+## 101 - Construction de l'image du projet pour utiliser sur github-actions.
+
+1. Commande pour build le docker image - utiliser le build de l'image :
+
+```
+docker build -t sergioamoncada/graphql:0.0.1 .
+
+docker image ls
+
+docker container run -p 3000:3000 sergioamoncada/graphql:0.0.1
+```
+
+Je vais voir le Hosting : `localhost:3000/graphql` s'il fonctionne.
+
+2. Effacer le docker build construit à la main - Le but est de automatiser la création du build avec GitHub-Actions.
+
+```
+docker container ls
+
+docker container rm -f ...your_container_id...
+```
+
+## 102 - GitHub Actions Steps - 1/5.
+
+1. Commande pour build le docker image - utiliser le build de l'image :
