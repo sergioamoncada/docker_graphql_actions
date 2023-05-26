@@ -3517,8 +3517,4 @@ Cette manière va faire en sorte qu'il va modifier automatiquement les github et
 #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
 ```
 
-Méthode optimal :
-
-```
-
-```
+Fin de la section 8.
