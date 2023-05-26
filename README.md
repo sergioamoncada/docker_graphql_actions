@@ -3399,3 +3399,124 @@ nous utilisons la version 4.0.3
 - name: Git Semantic Version
   uses: PaulHatch/semantic-version@v4.0.3
 ```
+
+Voici le code au complet :
+
+```
+name: Docker Image CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE: sergioamoncada/graphql
+      DOCKER_IMAGE_VERSION: 0.0.2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Git Semantic Version
+        uses: PaulHatch/semantic-version@v4.0.3
+        with:
+          major_pattern: 'major:'
+          minor_pattern: 'feat:'
+          format: '${major}.${minor}.${patch}-prerelease${increment}'
+        id: version
+
+      - name: Docker login
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+          echo "New version: $NEW_VERSION!!!!!"
+
+      - name: Build Docker image
+        run: |
+          docker build -t $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION .
+          docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION $DOCKER_IMAGE:latest
+
+      - name: Push Docker image
+        run: |
+          docker push $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
+          docker push $DOCKER_IMAGE:latest
+
+    # - name: Push the Docker image
+    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+```
+
+## 105 - Tags automatique sur dockerhub et sur github-actions : steps - 5/5.
+
+1. Modification du docker-image.yml
+
+```
+name: Docker Image CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE: sergioamoncada/graphql
+      # DOCKER_IMAGE_VERSION: 0.0.2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Git Semantic Version
+        id: version
+        uses: PaulHatch/semantic-version@v4.0.3
+        with:
+          major_pattern: 'major:'
+          minor_pattern: 'feat:'
+          format: '${major}.${minor}.${patch}-prerelease${increment}'
+
+      - name: Docker login
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - name: Build Docker image
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          docker build -t "$DOCKER_IMAGE:$NEW_VERSION" .
+          docker tag "$DOCKER_IMAGE:$DOCKER_IMAGE_VERSION $DOCKER_IMAGE:latest"
+
+      - name: Push Docker image
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          docker push "$DOCKER_IMAGE:$NEW_VERSION"
+          docker push "$DOCKER_IMAGE:latest"
+
+    # - name: Push the Docker image
+    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+```
+
+Méthode optimal :
+
+```
+
+```
