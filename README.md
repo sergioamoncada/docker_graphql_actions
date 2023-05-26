@@ -3247,16 +3247,17 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           echo "Commencement du login"
-          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
           echo "Fin du login"
 
     # - name: Build the Docker image
     #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
 
+
 ```
 
 Pour finir, il faut faire le commit à la branch main pour lancer l'action !
 
-## 10 - Construction de l'image steps - 2/5.
+## 103 - Construction de l'image steps - 2/5.
 
 1. se connecter à dockerhub à partir de notre terminal du github-actions :
