@@ -3260,4 +3260,87 @@ Pour finir, il faut faire le commit à la branch main pour lancer l'action !
 
 ## 103 - Construction de l'image steps - 2/5.
 
-1. se connecter à dockerhub à partir de notre terminal du github-actions :
+1. Ajouts de plusieurs Steps - Build docker image & Push docker image
+
+```
+name: Docker Image CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code - on regarde la construction
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Docker login - Connection à docker
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build -t sergioamoncada/graphql:0.0.2 .
+
+      - name: Push Docker image
+        run: |
+          docker push sergioamoncada/graphql:0.0.2
+
+    # - name: Push the Docker image
+    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+```
+
+## 103 - Renommer le latest de l'image dockerhub steps - 3/5.
+
+1. Petit truc simple :
+
+```
+name: Docker Image CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code - on regarde la construction
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Docker login - Connection à docker
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build -t sergioamoncada/graphql:0.0.2 .
+          docker tag sergioamoncada/graphql:0.0.2 sergioamoncada/graphql:latest
+
+      - name: Push Docker image
+        run: |
+          docker push sergioamoncada/graphql:0.0.2
+          docker push sergioamoncada/graphql:latest
+
+    # - name: Push the Docker image
+    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+```

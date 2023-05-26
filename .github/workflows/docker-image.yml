@@ -26,10 +26,12 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t sergioamoncada/graphql:0.0.2 .
+          docker tag sergioamoncada/graphql:0.0.2 sergioamoncada/graphql:latest
 
       - name: Push Docker image
         run: |
           docker push sergioamoncada/graphql:0.0.2
+          docker push sergioamoncada/graphql:latest
 
     # - name: Push the Docker image
     #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
