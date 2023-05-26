@@ -10,28 +10,30 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE: sergioamoncada/graphql
+      DOCKER_IMAGE_VERSION: 0.0.2
+
     steps:
-      - name: Checkout code - on regarde la construction
+      - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Docker login - Connection à docker
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+      - name: Docker login
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
 
       - name: Build Docker image
         run: |
-          docker build -t sergioamoncada/graphql:0.0.2 .
-          docker tag sergioamoncada/graphql:0.0.2 sergioamoncada/graphql:latest
+          docker build -t $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION .
+          docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION $DOCKER_IMAGE:latest
 
       - name: Push Docker image
         run: |
-          docker push sergioamoncada/graphql:0.0.2
-          docker push sergioamoncada/graphql:latest
+          docker push $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
+          docker push $DOCKER_IMAGE:latest
 
     # - name: Push the Docker image
     #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
