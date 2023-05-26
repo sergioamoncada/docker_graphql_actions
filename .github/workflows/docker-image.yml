@@ -67,7 +67,7 @@ jobs:
       DOCKER_USER: ${{ secrets.DOCKER_USER }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       DOCKER_IMAGE: sergioamoncada/graphql
-      DOCKER_IMAGE_VERSION: 0.0.2
+      # DOCKER_IMAGE_VERSION: 0.0.2
 
     steps:
       - name: Checkout code
@@ -97,6 +97,8 @@ jobs:
           docker tag "${DOCKER_IMAGE_TAGGED}" "${DOCKER_IMAGE_LATEST}"
 
       - name: Push Docker image
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.version }}
         run: |
           docker push "${DOCKER_IMAGE_TAGGED}"
           docker push "${DOCKER_IMAGE_LATEST}"
