@@ -3460,6 +3460,8 @@ jobs:
 
 1. Modification du docker-image.yml
 
+Cette manière va faire en sorte qu'il va modifier automatiquement les github et le dockerhub en ligne automatiquement. pour la version sémantique et le tag !
+
 ```
 # name: Docker Image CI
 
