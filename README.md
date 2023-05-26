@@ -3214,4 +3214,49 @@ docker container rm -f ...your_container_id...
 
 ## 102 - GitHub Actions Steps - 1/5.
 
-1. Commande pour build le docker image - utiliser le build de l'image :
+1. se connecter à dockerhub à partir de notre terminal du github-actions :
+
+```
+echo "YOUR_TOKEN" | docker login -u sergioamoncada --password-stdin
+```
+
+2. Modification dans notre documents : [docker-image.yml](.github/workflows/docker-image.yml#L)
+
+```
+name: Docker Image CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code - on regarde la construction
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Docker login - Connection à docker
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "Commencement du login"
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+          echo "Fin du login"
+
+    # - name: Build the Docker image
+    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+```
+
+Pour finir, il faut faire le commit à la branch main pour lancer l'action !
+
+## 10 - Construction de l'image steps - 2/5.
+
+1. se connecter à dockerhub à partir de notre terminal du github-actions :
