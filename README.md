@@ -3300,7 +3300,7 @@ jobs:
     #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
 ```
 
-## 103 - Renommer le latest de l'image dockerhub steps - 3/5.
+## 104 - Renommer le latest de l'image dockerhub steps - 3/5.
 
 1. Petit truc simple :
 
@@ -3343,4 +3343,59 @@ jobs:
     # - name: Push the Docker image
     #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
 
+```
+
+2. Si nous voulons optimiser notre fichier pour qu'il y a plus de variable d'environnement et changer les choses à un seul endroit :
+
+```
+name: Docker Image CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_IMAGE: sergioamoncada/graphql
+      DOCKER_IMAGE_VERSION: 0.0.2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Docker login
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build -t $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION .
+          docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION $DOCKER_IMAGE:latest
+
+      - name: Push Docker image
+        run: |
+          docker push $DOCKER_IMAGE:$DOCKER_IMAGE_VERSION
+          docker push $DOCKER_IMAGE:latest
+
+    # - name: Push the Docker image
+    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+```
+
+## 105 - Crée un automatisme du version sémantique de l'image steps - 4/5.
+
+1. Utiliser l'action sur GitHub Actions de : [PaulHatch/Semantic-version](https://github.com/marketplace/actions/git-semantic-version?version=v4.0.3).
+
+nous utilisons la version 4.0.3
+
+```
+- name: Git Semantic Version
+  uses: PaulHatch/semantic-version@v4.0.3
 ```

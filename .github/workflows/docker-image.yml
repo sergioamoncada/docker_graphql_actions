@@ -15,6 +15,7 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       DOCKER_IMAGE: sergioamoncada/graphql
       DOCKER_IMAGE_VERSION: 0.0.2
+      NEW_VERSION: ${{ steps.version.outputs.version }}
 
     steps:
       - name: Checkout code
@@ -22,8 +23,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Git Semantic Version
+        uses: PaulHatch/semantic-version@v4.0.3
+        with:
+          major_pattern: 'major:'
+          minor_pattern: 'feat:'
+          format: '${major}.${minor}.${patch}-prerelease${increment}'
+        id: version
+
       - name: Docker login
-        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+          echo "New version: $NEW_VERSION!!!!"
 
       - name: Build Docker image
         run: |
